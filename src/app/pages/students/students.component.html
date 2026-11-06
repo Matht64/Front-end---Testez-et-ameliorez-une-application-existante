@@ -1,0 +1,263 @@
+
+<div class="container py-4">
+  <div class="page-header mb-4">
+    <div>
+      <h2>Student Management</h2>
+      <p class="text-muted mb-0">
+        Manage your students and their information.
+      </p>
+    </div>
+    <button
+    type="button"
+    class="btn btn-outline-danger"
+    (click)="logout()"
+  >
+    Logout
+  </button>
+  </div>
+
+  @if (successMessage) {
+    <div class="alert alert-success" role="status">
+      {{ successMessage }}
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert alert-danger" role="alert">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <div class="row g-4">
+    <!-- Student form -->
+    <div class="col-12 col-lg-4">
+      <div class="card shadow-sm">
+        <div class="card-header">
+          <h5 class="mb-0">
+            {{ editingStudentId !== null ? 'Edit student' : 'Add student' }}
+          </h5>
+        </div>
+
+        <div class="card-body">
+          <form [formGroup]="studentForm" (ngSubmit)="onSubmit()"
+                novalidate>
+
+            <div class="mb-3">
+              <label for="firstName" class="form-label">
+                First name
+              </label>
+
+              <input
+                id="firstName"
+                type="text"
+                formControlName="firstName"
+                class="form-control"
+                autocomplete="given-name"
+                [class.is-invalid]="submitted && form['firstName'].invalid"
+              />
+
+              @if (submitted && form['firstName'].errors) {
+                <div class="invalid-feedback">
+                  @if (form['firstName'].errors['required']) {
+                    First name is required.
+                  } @else if (form['firstName'].errors['maxlength']) {
+                    First name cannot exceed 100 characters.
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="mb-3">
+              <label for="lastName" class="form-label">
+                Last name
+              </label>
+
+              <input
+                id="lastName"
+                type="text"
+                formControlName="lastName"
+                class="form-control"
+                autocomplete="family-name"
+                [class.is-invalid]="submitted && form['lastName'].invalid"
+              />
+
+              @if (submitted && form['lastName'].errors) {
+                <div class="invalid-feedback">
+                  @if (form['lastName'].errors['required']) {
+                    Last name is required.
+                  } @else if (form['lastName'].errors['maxlength']) {
+                    Last name cannot exceed 100 characters.
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+
+              <input
+                id="email"
+                type="email"
+                formControlName="email"
+                class="form-control"
+                autocomplete="email"
+                [class.is-invalid]="submitted && form['email'].invalid"
+              />
+
+              @if (submitted && form['email'].errors) {
+                <div class="invalid-feedback">
+                  @if (form['email'].errors['required']) {
+                    Email is required.
+                  } @else if (form['email'].errors['email']) {
+                    Please enter a valid email address.
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="mb-3">
+              <label for="age" class="form-label">Age</label>
+
+              <input
+                id="age"
+                type="number"
+                min="1"
+                step="1"
+                formControlName="age"
+                class="form-control"
+                [class.is-invalid]="submitted && form['age'].invalid"
+              />
+
+              @if (submitted && form['age'].errors) {
+                <div class="invalid-feedback">
+                  @if (form['age'].errors['required']) {
+                    Age is required.
+                  } @else if (form['age'].errors['min']) {
+                    Age must be at least 1.
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+              <button
+                type="submit"
+                class="btn btn-primary flex-grow-1"
+                [disabled]="saving"
+              >
+                @if (saving) {
+                  Saving...
+                } @else {
+                  {{ editingStudentId !== null ? 'Update' : 'Create' }}
+                }
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                (click)="resetForm()"
+                [disabled]="saving"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Student list -->
+    <div class="col-12 col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between
+                    align-items-center gap-2">
+          <h5 class="mb-0">Students</h5>
+
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-primary"
+            (click)="loadStudents()"
+            [disabled]="loading"
+          >
+            {{ loading ? 'Loading...' : 'Refresh' }}
+          </button>
+        </div>
+
+        <div class="card-body">
+          @if (loading) {
+            <div class="text-center py-4" role="status">
+              <div class="spinner-border text-primary" aria-hidden="true"></div>
+              <p class="mt-2 mb-0">Loading students...</p>
+            </div>
+          } @else if (students.length === 0) {
+            <div class="empty-state text-center py-5">
+              <h6>No students found</h6>
+              <p class="text-muted mb-0">
+                Add your first student using the form.
+              </p>
+            </div>
+          } @else {
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Student</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Age</th>
+                    <th scope="col" class="text-end">Actions</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  @for (student of students; track student.id) {
+                    <tr>
+                      <td>{{ student.id }}</td>
+
+                      <td>
+                        <div class="fw-semibold">
+                          {{ student.firstName }} {{ student.lastName }}
+                        </div>
+                      </td>
+
+                      <td class="email-cell">{{ student.email }}</td>
+
+                      <td>{{ student.age }}</td>
+
+                      <td class="text-end">
+                        <div class="d-inline-flex gap-2">
+                          <button
+                            type="button"
+                            class="btn btn-sm btn-outline-primary"
+                            (click)="editStudent(student)"
+                            [attr.aria-label]="'Edit ' + student.firstName"
+                          >
+                            Edit
+                          </button>
+
+                          <button
+                            type="button"
+                            class="btn btn-sm btn-outline-danger"
+                            (click)="deleteStudent(student)"
+                            [attr.aria-label]="'Delete ' + student.firstName"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <div class="text-muted small mt-3">
+              {{ students.length }}
+              {{ students.length === 1 ? 'student' : 'students' }} total
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
