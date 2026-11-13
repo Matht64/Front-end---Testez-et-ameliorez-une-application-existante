@@ -8,7 +8,10 @@
     "watch": "ng build --watch --configuration development",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "cy:open": "cypress open",
+    "cy:mock": "cypress run --spec 'cypress/e2e/component-simulation/**/*.cy.ts'",
+    "cy:real": "cypress run --spec 'cypress/e2e/e2e/**/*.cy.ts'"
   },
   "private": true,
   "dependencies": {

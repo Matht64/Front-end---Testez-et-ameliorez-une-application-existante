@@ -164,6 +164,7 @@ export class StudentsComponent implements OnInit {
     });
   }
 
+
   deleteStudent(student: Student): void {
     const confirmed = window.confirm(
       `Are you sure you want to delete ${student.firstName} ${student.lastName}?`
@@ -180,16 +181,21 @@ export class StudentsComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
+
+          // Remove the deleted student from the local list.
           this.students = this.students.filter(
-            (item) => item.id !== student.id
+            item => item.id !== student.id
           );
 
+          // Display success message.
           this.successMessage = 'Student deleted successfully.';
 
+          // Reset the form if this student was being edited.
           if (this.editingStudentId === student.id) {
             this.resetForm();
           }
         },
+
         error: (error) => {
           this.errorMessage = this.getErrorMessage(
             error,
@@ -198,6 +204,7 @@ export class StudentsComponent implements OnInit {
         }
       });
   }
+
 
   resetForm(): void {
     this.studentForm.reset();
@@ -230,7 +237,7 @@ export class StudentsComponent implements OnInit {
       ?? httpError.error?.detail
       ?? fallback;
   }
-  
+
   logout(): void {
     this.authService.logout();
   }

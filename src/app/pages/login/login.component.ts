@@ -68,7 +68,7 @@ export class LoginComponent implements OnInit {
           // Only allow local application paths.
           const destination =
             returnUrl?.startsWith('/') &&
-            !returnUrl.startsWith('//')
+              !returnUrl.startsWith('//')
               ? returnUrl
               : '/';
 
@@ -79,7 +79,7 @@ export class LoginComponent implements OnInit {
 
           this.loading = false;
           this.errorMessage =
-            error.status === 401
+            error.status === 400 || error.status === 401
               ? 'Invalid login or password.'
               : error.status === 0
                 ? 'Unable to connect to the server.'

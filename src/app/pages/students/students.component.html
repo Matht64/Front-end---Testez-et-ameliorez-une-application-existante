@@ -230,7 +230,7 @@
                             type="button"
                             class="btn btn-sm btn-outline-primary"
                             (click)="editStudent(student)"
-                            [attr.aria-label]="'Edit ' + student.firstName"
+                            [attr.aria-label]="'Edit ' + student.firstName + ' ' + student.id"
                           >
                             Edit
                           </button>
@@ -239,7 +239,7 @@
                             type="button"
                             class="btn btn-sm btn-outline-danger"
                             (click)="deleteStudent(student)"
-                            [attr.aria-label]="'Delete ' + student.firstName"
+                            [attr.aria-label]="'Delete ' + student.firstName + ' ' + student.id"
                           >
                             Delete
                           </button>
