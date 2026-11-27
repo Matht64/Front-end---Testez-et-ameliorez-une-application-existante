@@ -130,12 +130,12 @@ describe('Real registration E2E tests', () => {
       cy.wait('@duplicateRegister').then((interception) => {
 
         expect(interception.response!.statusCode)
-          .to.be.oneOf([400, 409]);
+        .to.equal(409);
 
       });
 
-      // cy.contains('This login is already taken.')
-      //   .should('be.visible');
+      cy.contains('This login is already taken.')
+        .should('be.visible');
 
       cy.url().should('include', '/register');
 
